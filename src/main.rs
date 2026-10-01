@@ -1,4 +1,5 @@
 mod mtr_calc;
+mod spread_sheets;
 mod async_test;
 mod multithread;
 
@@ -11,13 +12,16 @@ use ferris_says::say;
 use std::io::{BufWriter, stdout};
 
 fn main() {
-    let string = String::from(
-        "-Hyreim
--Rakvar
--Sjaard
--Rekvam",
-    );
-    string_analyzer(string);
+    spread_sheets::create_registry();
+    // spread_sheets::create_spread_sheet();
+
+//     let string = String::from(
+//         "-Hyreim
+//          -Rakvar
+//          -Sjaard
+//          -Rekvam",
+//     );
+//     string_analyzer(string);
 
     // guessing_game();
     // mtr_calc::balance_calculation();
@@ -99,7 +103,7 @@ fn time_function(function: fn()) {
     println!("Time elapsed is: {:?}", duration);
 }
 
-pub fn fibonacci_nbr(n: u64) -> u128 {
+fn fibonacci_nbr(n: u64) -> u128 {
     // Fibonacci Sequence start with 0, 1, each number in the sequence is the sum of the last 2
     // Avoid Recusivity -> Iterative
     let mut a: u128 = 0;
