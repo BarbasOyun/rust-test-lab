@@ -29,6 +29,13 @@ pub struct ColumnEntry {
     string: String,
 }
 
+pub struct ColumnEntry2 {
+    attribute: Attribute,
+    mix_string: String,
+    masc_string: String,
+    fem_string: String,
+}
+
 /// Test
 pub fn create_spread_sheet() {
     fs::create_dir_all("test_out").expect("create_dir");
@@ -68,10 +75,142 @@ pub fn create_spread_sheet() {
 
 // DyNG Spread Sheet Filler
 
-/// Create Nord Culture Component name registry
+/// Create Nordic Culture Component name registry
 pub fn create_registry() {
     let path = std::path::Path::new("test_out/name_registry.ods");
 
+    // STR
+    let str_mix = ColumnEntry {
+        attribute: Attribute::Strength,
+        category: Category::Mix,
+        string: String::from(
+            "-Vyrkol
+            -Howitir
+            -Idwyr
+            -Hilmar
+            -Hrovitnir",
+        ),
+    };
+    fill_registry(path, str_mix);
+
+    let str_masc = ColumnEntry {
+        attribute: Attribute::Strength,
+        category: Category::Masc,
+        string: String::from(
+            "-Bjohrn
+            -Ragnvald
+            -Ulthor
+            -Olaf",
+        ),
+    };
+    fill_registry(path, str_masc);
+
+    let str_fem = ColumnEntry {
+        attribute: Attribute::Strength,
+        category: Category::Fem,
+        string: String::from("-Jarla"),
+    };
+    fill_registry(path, str_fem);
+
+    // SPI
+    let spi_mix = ColumnEntry {
+        attribute: Attribute::Spirit,
+        category: Category::Mix,
+        string: String::from("-Eradan"),
+    };
+    fill_registry(path, spi_mix);
+
+    let spi_masc = ColumnEntry {
+        attribute: Attribute::Spirit,
+        category: Category::Masc,
+        string: String::from(
+            "-Ymladd
+            -Lothrik
+            -Unduradh",
+        ),
+    };
+    fill_registry(path, spi_masc);
+
+    let spi_fem = ColumnEntry {
+        attribute: Attribute::Spirit,
+        category: Category::Fem,
+        string: String::from("Ulgrate"),
+    };
+    fill_registry(path, spi_fem);
+
+    // INT
+    let int_mix = ColumnEntry {
+        attribute: Attribute::Intelligence,
+        category: Category::Mix,
+        string: String::from("-Yhorm"),
+    };
+    fill_registry(path, int_mix);
+
+    let int_masc = ColumnEntry {
+        attribute: Attribute::Intelligence,
+        category: Category::Masc,
+        string: String::from("-Einar"),
+    };
+    fill_registry(path, int_masc);
+
+    let int_fem = ColumnEntry {
+        attribute: Attribute::Intelligence,
+        category: Category::Fem,
+        string: String::from(""),
+    };
+    fill_registry(path, int_fem);
+
+    // CUN
+    let cun_mix = ColumnEntry {
+        attribute: Attribute::Cunning,
+        category: Category::Mix,
+        string: String::from(
+            "-Lokat
+            -Leiden",
+        ),
+    };
+    fill_registry(path, cun_mix);
+
+    let cun_masc = ColumnEntry {
+        attribute: Attribute::Cunning,
+        category: Category::Masc,
+        string: String::from("-Zigomar"),
+    };
+    fill_registry(path, cun_masc);
+
+    let cun_fem = ColumnEntry {
+        attribute: Attribute::Cunning,
+        category: Category::Fem,
+        string: String::from("-Shanar"),
+    };
+    fill_registry(path, cun_fem);
+
+    // DEX
+    let dex_mix = ColumnEntry {
+        attribute: Attribute::Dexterity,
+        category: Category::Mix,
+        string: String::from("-Ivyr"),
+    };
+    fill_registry(path, dex_mix);
+
+    let dex_masc = ColumnEntry {
+        attribute: Attribute::Dexterity,
+        category: Category::Masc,
+        string: String::from(
+            "-Rarick
+            -Holten",
+        ),
+    };
+    fill_registry(path, dex_masc);
+
+    let dex_fem = ColumnEntry {
+        attribute: Attribute::Dexterity,
+        category: Category::Fem,
+        string: String::from("-Valla"),
+    };
+    fill_registry(path, dex_fem);
+
+    // MOT
     let mot_mix = ColumnEntry {
         attribute: Attribute::Motricity,
         category: Category::Mix,
@@ -82,7 +221,6 @@ pub fn create_registry() {
             -Rekvam",
         ),
     };
-
     fill_registry(path, mot_mix);
 
     let mot_masc = ColumnEntry {
@@ -93,8 +231,14 @@ pub fn create_registry() {
             -Harald",
         ),
     };
-
     fill_registry(path, mot_masc);
+
+    let mot_fem = ColumnEntry {
+        attribute: Attribute::Motricity,
+        category: Category::Fem,
+        string: String::from("-Yigit"),
+    };
+    fill_registry(path, mot_fem);
 }
 
 /// Create or Write a .ods file at path
@@ -112,7 +256,7 @@ pub fn fill_registry<P: AsRef<Path>>(path: P, column_entry: ColumnEntry) {
 
     // Create Sheet1
     if wb.num_sheets() == 0 {
-        let sheet = Sheet::new("one");
+        let sheet = Sheet::new("Nordic");
         wb.push_sheet(sheet);
     }
 
