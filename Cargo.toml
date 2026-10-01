@@ -1,7 +1,11 @@
 [package]
+author = "BarbasDev"
 name = "rust-test-lab"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+# https://docs.rs/trpl/latest/trpl/ -> Rust tuto crate
 trpl = "0.3.0"
+rand = "0.10.3"
+ferris-says = "0.3.1"
