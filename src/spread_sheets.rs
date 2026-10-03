@@ -8,6 +8,7 @@ use spreadsheet_ods::{
 };
 use std::{fs, path::Path};
 
+#[derive(Clone)]
 enum Attribute {
     Strength,
     Spirit,
@@ -17,12 +18,37 @@ enum Attribute {
     Motricity,
 }
 
+impl Attribute {
+    fn get_next(&self) -> Self {
+        return match self {
+            Attribute::Strength => Attribute::Spirit,
+            Attribute::Spirit => Attribute::Intelligence,
+            Attribute::Intelligence => Attribute::Cunning,
+            Attribute::Cunning => Attribute::Dexterity,
+            Attribute::Dexterity => Attribute::Motricity,
+            Attribute::Motricity => Attribute::Strength,
+        };
+    }
+}
+
+#[derive(Clone)]
 enum Category {
     Mix,
     Masc,
     Fem,
 }
 
+impl Category {
+    fn get_next(&self) -> Self {
+        return match self {
+            Category::Mix => Category::Masc,
+            Category::Masc => Category::Fem,
+            Category::Fem => Category::Mix,
+        };
+    }
+}
+
+#[derive(Clone)]
 pub struct ColumnEntry {
     attribute: Attribute,
     category: Category,
@@ -74,201 +100,25 @@ pub fn create_spread_sheet() {
 }
 
 // DyNG Spread Sheet Filler
+// Take a sring of names
+// -> Fill sheet with it
 
-/// Create Nordic Culture Component name registry
 pub fn create_registry() {
-    let path = std::path::Path::new("test_out/name_registry.ods");
+    // TODO : Fill the European Names Sheet ID = 0
 
-    // STR
-    let str_mix = ColumnEntry {
-        attribute: Attribute::Strength,
-        category: Category::Mix,
-        string: String::from(
-            "-Vyrkol
+    // Fill the Nordic Names Sheet ID = 1
+    let name_list = vec![
+        "-Vyrkol
             -Howitir
             -Idwyr
             -Hilmar
             -Hrovitnir",
-        ),
-    };
-    fill_registry(path, str_mix);
-
-    let str_masc = ColumnEntry {
-        attribute: Attribute::Strength,
-        category: Category::Masc,
-        string: String::from(
-            "-Bjohrn
+        "-Bjohrn
             -Ragnvald
             -Ulthor
             -Olaf",
-        ),
-    };
-    fill_registry(path, str_masc);
-
-    let str_fem = ColumnEntry {
-        attribute: Attribute::Strength,
-        category: Category::Fem,
-        string: String::from("-Jarla"),
-    };
-    fill_registry(path, str_fem);
-
-    // SPI
-    let spi_mix = ColumnEntry {
-        attribute: Attribute::Spirit,
-        category: Category::Mix,
-        string: String::from("-Eradan"),
-    };
-    fill_registry(path, spi_mix);
-
-    let spi_masc = ColumnEntry {
-        attribute: Attribute::Spirit,
-        category: Category::Masc,
-        string: String::from(
-            "-Ymladd
-            -Lothrik
-            -Unduradh",
-        ),
-    };
-    fill_registry(path, spi_masc);
-
-    let spi_fem = ColumnEntry {
-        attribute: Attribute::Spirit,
-        category: Category::Fem,
-        string: String::from("Ulgrate"),
-    };
-    fill_registry(path, spi_fem);
-
-    // INT
-    let int_mix = ColumnEntry {
-        attribute: Attribute::Intelligence,
-        category: Category::Mix,
-        string: String::from("-Yhorm"),
-    };
-    fill_registry(path, int_mix);
-
-    let int_masc = ColumnEntry {
-        attribute: Attribute::Intelligence,
-        category: Category::Masc,
-        string: String::from("-Einar"),
-    };
-    fill_registry(path, int_masc);
-
-    let int_fem = ColumnEntry {
-        attribute: Attribute::Intelligence,
-        category: Category::Fem,
-        string: String::from(""),
-    };
-    fill_registry(path, int_fem);
-
-    // CUN
-    let cun_mix = ColumnEntry {
-        attribute: Attribute::Cunning,
-        category: Category::Mix,
-        string: String::from(
-            "-Lokat
-            -Leiden",
-        ),
-    };
-    fill_registry(path, cun_mix);
-
-    let cun_masc = ColumnEntry {
-        attribute: Attribute::Cunning,
-        category: Category::Masc,
-        string: String::from("-Zigomar"),
-    };
-    fill_registry(path, cun_masc);
-
-    let cun_fem = ColumnEntry {
-        attribute: Attribute::Cunning,
-        category: Category::Fem,
-        string: String::from("-Shanar"),
-    };
-    fill_registry(path, cun_fem);
-
-    // DEX
-    let dex_mix = ColumnEntry {
-        attribute: Attribute::Dexterity,
-        category: Category::Mix,
-        string: String::from("-Ivyr"),
-    };
-    fill_registry(path, dex_mix);
-
-    let dex_masc = ColumnEntry {
-        attribute: Attribute::Dexterity,
-        category: Category::Masc,
-        string: String::from(
-            "-Rarick
-            -Holten",
-        ),
-    };
-    fill_registry(path, dex_masc);
-
-    let dex_fem = ColumnEntry {
-        attribute: Attribute::Dexterity,
-        category: Category::Fem,
-        string: String::from("-Valla"),
-    };
-    fill_registry(path, dex_fem);
-
-    // MOT
-    let mot_mix = ColumnEntry {
-        attribute: Attribute::Motricity,
-        category: Category::Mix,
-        string: String::from(
-            "-Hyreim
-            -Rakvar
-            -Sjaard
-            -Rekvam",
-        ),
-    };
-    fill_registry(path, mot_mix);
-
-    let mot_masc = ColumnEntry {
-        attribute: Attribute::Motricity,
-        category: Category::Masc,
-        string: String::from(
-            "-Vugnar
-            -Harald",
-        ),
-    };
-    fill_registry(path, mot_masc);
-
-    let mot_fem = ColumnEntry {
-        attribute: Attribute::Motricity,
-        category: Category::Fem,
-        string: String::from("-Yigit"),
-    };
-    fill_registry(path, mot_fem);
-}
-
-/// Create or Write a .ods file at path
-/// Fill Sheet1 at column index with Vec<String>
-pub fn fill_registry<P: AsRef<Path>>(path: P, column_entry: ColumnEntry) {
-    let column_id = column_entry.attribute as u8 * 3 + column_entry.category as u8;
-    let mut strings = sort_names(column_entry.string);
-
-    // Create or Get WorkBook
-    let mut wb = if path.as_ref().exists() {
-        spreadsheet_ods::read_ods(&path).unwrap()
-    } else {
-        WorkBook::new(locale!("en-US"))
-    };
-
-    // Create Sheet1
-    if wb.num_sheets() == 0 {
-        let sheet = Sheet::new("Nordic");
-        wb.push_sheet(sheet);
-    }
-
-    let sheet = wb.sheet_mut(0);
-
-    // Loop over names
-    for i in 0..strings.len() {
-        sheet.set_value(i as u32, column_id as u32, strings.swap_remove(0));
-    }
-
-    // Write to File
-    spreadsheet_ods::write_ods(&mut wb, path).expect("write_ods")
+    ];
+    fill_sheet("Nordic", name_list);
 }
 
 /// Take a string that contain -name1 -name2 -...
@@ -276,6 +126,11 @@ pub fn fill_registry<P: AsRef<Path>>(path: P, column_entry: ColumnEntry) {
 pub fn sort_names(string: String) -> Vec<String> {
     println!("---Sorting Names");
     let mut names = vec![];
+
+    // TODO : swap to &str
+    // let mut s: &str = "tets";
+    // let t= s.chars();
+    // s = s.trim();
 
     let mut current_name = String::from("");
     let mut record = false;
@@ -302,4 +157,223 @@ pub fn sort_names(string: String) -> Vec<String> {
     names.push(current_name.clone());
 
     return names;
+}
+
+/// Create or Write a .ods file at path
+/// Fill sheet based on entry
+pub fn add_to_sheet<P: AsRef<Path>>(path: P, sheet_name: &str, column_entry: ColumnEntry) {
+    let column_id = column_entry.attribute as u8 * 3 + column_entry.category as u8;
+    let mut strings = sort_names(column_entry.string);
+
+    // Create or Get WorkBook
+    let mut wb = if path.as_ref().exists() {
+        spreadsheet_ods::read_ods(&path).unwrap()
+    } else {
+        WorkBook::new(locale!("en-US"))
+    };
+
+    // Create Sheet1
+    if wb.num_sheets() == 0 {
+        let sheet = Sheet::new(sheet_name);
+        wb.push_sheet(sheet);
+    }
+
+    let sheet = wb.sheet_mut(0);
+
+    // Loop over names
+    for i in 0..strings.len() {
+        sheet.set_value(i as u32, column_id as u32, strings.swap_remove(0));
+    }
+
+    // Write to File
+    spreadsheet_ods::write_ods(&mut wb, path).expect("write_ods")
+}
+
+/// Fill sheet with names_list = Vec<names>
+/// Use DyNG Data structure for names
+fn fill_sheet(sheet_name: &str, names_list: Vec<&str>) {
+    let path = std::path::Path::new("test_out/dyng_names.ods");
+
+    let mut attribute = Attribute::Strength;
+    let mut category = Category::Mix;
+
+    for names in names_list {
+        let column_entry = ColumnEntry {
+            attribute: attribute.clone(),
+            category: category.clone(),
+            string: names.to_string(),
+        };
+
+        add_to_sheet(path, sheet_name, column_entry);
+
+        attribute = attribute.get_next();
+        category = category.get_next();
+    }
+}
+
+/// Create Nordic Culture Component name registry
+fn fill_sheet_painfull() {
+    let path = std::path::Path::new("test_out/dyng_names.ods");
+    let sheet_name = "Nordic";
+
+    // STR
+    let str_mix = ColumnEntry {
+        attribute: Attribute::Strength,
+        category: Category::Mix,
+        string: String::from(
+            "-Vyrkol
+            -Howitir
+            -Idwyr
+            -Hilmar
+            -Hrovitnir",
+        ),
+    };
+    add_to_sheet(path, sheet_name, str_mix);
+
+    let str_masc = ColumnEntry {
+        attribute: Attribute::Strength,
+        category: Category::Masc,
+        string: String::from(
+            "-Bjohrn
+            -Ragnvald
+            -Ulthor
+            -Olaf",
+        ),
+    };
+    add_to_sheet(path, sheet_name, str_masc);
+
+    let str_fem = ColumnEntry {
+        attribute: Attribute::Strength,
+        category: Category::Fem,
+        string: String::from("-Jarla"),
+    };
+    add_to_sheet(path, sheet_name, str_fem);
+
+    // SPI
+    let spi_mix = ColumnEntry {
+        attribute: Attribute::Spirit,
+        category: Category::Mix,
+        string: String::from("-Eradan"),
+    };
+    add_to_sheet(path, sheet_name, spi_mix);
+
+    let spi_masc = ColumnEntry {
+        attribute: Attribute::Spirit,
+        category: Category::Masc,
+        string: String::from(
+            "-Ymladd
+            -Lothrik
+            -Unduradh",
+        ),
+    };
+    add_to_sheet(path, sheet_name, spi_masc);
+
+    let spi_fem = ColumnEntry {
+        attribute: Attribute::Spirit,
+        category: Category::Fem,
+        string: String::from("Ulgrate"),
+    };
+    add_to_sheet(path, sheet_name, spi_fem);
+
+    // INT
+    let int_mix = ColumnEntry {
+        attribute: Attribute::Intelligence,
+        category: Category::Mix,
+        string: String::from("-Yhorm"),
+    };
+    add_to_sheet(path, sheet_name, int_mix);
+
+    let int_masc = ColumnEntry {
+        attribute: Attribute::Intelligence,
+        category: Category::Masc,
+        string: String::from("-Einar"),
+    };
+    add_to_sheet(path, sheet_name, int_masc);
+
+    let int_fem = ColumnEntry {
+        attribute: Attribute::Intelligence,
+        category: Category::Fem,
+        string: String::from(""),
+    };
+    add_to_sheet(path, sheet_name, int_fem);
+
+    // CUN
+    let cun_mix = ColumnEntry {
+        attribute: Attribute::Cunning,
+        category: Category::Mix,
+        string: String::from(
+            "-Lokat
+            -Leiden",
+        ),
+    };
+    add_to_sheet(path, sheet_name, cun_mix);
+
+    let cun_masc = ColumnEntry {
+        attribute: Attribute::Cunning,
+        category: Category::Masc,
+        string: String::from("-Zigomar"),
+    };
+    add_to_sheet(path, sheet_name, cun_masc);
+
+    let cun_fem = ColumnEntry {
+        attribute: Attribute::Cunning,
+        category: Category::Fem,
+        string: String::from("-Shanar"),
+    };
+    add_to_sheet(path, sheet_name, cun_fem);
+
+    // DEX
+    let dex_mix = ColumnEntry {
+        attribute: Attribute::Dexterity,
+        category: Category::Mix,
+        string: String::from("-Ivyr"),
+    };
+    add_to_sheet(path, sheet_name, dex_mix);
+
+    let dex_masc = ColumnEntry {
+        attribute: Attribute::Dexterity,
+        category: Category::Masc,
+        string: String::from(
+            "-Rarick
+            -Holten",
+        ),
+    };
+    add_to_sheet(path, sheet_name, dex_masc);
+
+    let dex_fem = ColumnEntry {
+        attribute: Attribute::Dexterity,
+        category: Category::Fem,
+        string: String::from("-Valla"),
+    };
+    add_to_sheet(path, sheet_name, dex_fem);
+
+    // MOT
+    let mot_mix = ColumnEntry {
+        attribute: Attribute::Motricity,
+        category: Category::Mix,
+        string: String::from(
+            "-Hyreim
+            -Rakvar
+            -Sjaard
+            -Rekvam",
+        ),
+    };
+    add_to_sheet(path, sheet_name, mot_mix);
+
+    let mot_masc = ColumnEntry {
+        attribute: Attribute::Motricity,
+        category: Category::Masc,
+        string: String::from(
+            "-Vugnar
+            -Harald",
+        ),
+    };
+    add_to_sheet(path, sheet_name, mot_masc);
+
+    let mot_fem = ColumnEntry {
+        attribute: Attribute::Motricity,
+        category: Category::Fem,
+        string: String::from("-Yigit"),
+    };
+    add_to_sheet(path, sheet_name, mot_fem);
 }
