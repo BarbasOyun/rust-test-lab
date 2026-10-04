@@ -13,6 +13,9 @@ use std::io::{BufWriter, stdout};
 
 fn main() {
     spread_sheets::create_names_workbook();
+    spread_sheets::create_factions_workbook();
+    spread_sheets::create_attributes_workbook();
+    
     // spread_sheets::create_spread_sheet_test();
 
 //     let string = String::from(
