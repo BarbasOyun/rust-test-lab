@@ -31,7 +31,7 @@ impl Attribute {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 enum Category {
     Mix,
     Masc,
@@ -62,17 +62,13 @@ pub struct ColumnEntry2 {
     fem_string: String,
 }
 
-/// Test
-pub fn create_spread_sheet() {
-    fs::create_dir_all("test_out").expect("create_dir");
+// Sheets
 
-    // Create or Get WorkBook Object
+pub fn create_spread_sheet_test() {
+    fs::create_dir_all("test_out").expect("create_dir");
     let path = std::path::Path::new("test_out/lib_example.ods");
-    let mut wb = if path.exists() {
-        spreadsheet_ods::read_ods(path).unwrap()
-    } else {
-        WorkBook::new(locale!("en-US"))
-    };
+
+    let mut wb = create_or_get_workbook(path).expect("");
 
     // Create Sheet1
     if wb.num_sheets() == 0 {
@@ -99,41 +95,165 @@ pub fn create_spread_sheet() {
     spreadsheet_ods::write_ods(&mut wb, "test_out/lib_example.ods").expect("write_ods")
 }
 
+fn create_or_get_workbook<P: AsRef<Path>>(path: P) -> Result<WorkBook, String> {
+    let wb = if path.as_ref().exists() {
+        spreadsheet_ods::read_ods(path).unwrap()
+    } else {
+        WorkBook::new(locale!("en-US"))
+    };
+
+    return Ok(wb);
+}
+
+/// Try to Create a sheet in a WorkBook at Index
+fn create_sheet<'a>(
+    wb: &'a mut WorkBook,
+    sheet_name: &str,
+    index: usize,
+) -> Result<&'a mut Sheet, String> {
+    if wb.num_sheets() <= index {
+        let sheet = Sheet::new(sheet_name);
+        wb.push_sheet(sheet);
+        return Ok(wb.sheet_mut(index));
+    } else {
+        return Err(format!(
+            "Failed to Create Sheet : {}, at Index {}, current number of sheets = {}",
+            sheet_name,
+            index,
+            wb.num_sheets()
+        ));
+    }
+}
+
+// TODO : Fill Row & Column
+
 // DyNG Spread Sheet Filler
+
+/* #region NAMES */
+
 // Take a sring of names
 // -> Fill sheet with it
 
-pub fn create_registry() {
-    // TODO : Fill the European Names Sheet ID = 0
+/// Create a names WorkBook
+/// Each sheet = 1 Culture Component Names
+pub fn create_names_workbook() {
+    let path = std::path::Path::new("test_out/dyng_names.ods");
+    let mut wb = create_or_get_workbook(path).unwrap();
 
-    // Fill the Nordic Names Sheet ID = 1
-    let name_list = vec![
-        "-Vyrkol
+    // European Names
+    let european_sheet = create_sheet(&mut wb, "European", 0).unwrap();
+    // TODO
+
+    // Nordic Names
+    let nordic_sheet = create_sheet(&mut wb, "Nordic", 1).unwrap();
+
+    let nordic_name_list = vec![
+        // STR
+        "-STR_Mix
+            -Vyrkol
             -Howitir
             -Idwyr
             -Hilmar
             -Hrovitnir",
-        "-Bjohrn
+        "-STR_Masc
+            -Bjohrn
             -Ragnvald
             -Ulthor
             -Olaf",
+        "-STR_Fem
+            -Jarla",
+        // SPI
+        "-SPI_Mix
+            -Eradan",
+        "-SPI_Masc
+            -Ymladd
+            -Lothrik
+            -Unduradh",
+        "-SPI_Fem
+            -Ulgrate",
+        // INT
+        "-INT_Mix
+            -Yhorm",
+        "-INT_Masc
+            -Einar",
+        "-INT_Fem",
+        // CUN
+        "-CUN_Mix
+            -Lokat
+            -Leiden",
+        "-CUN_Masc
+            -Zigomar",
+        "-CUN_Fem
+            -Shanar",
+        // DEX
+        "-DEX_Mix
+            -Ivyr",
+        "-DEX_Masc
+            -Rarick
+            -Holten",
+        "-DEX_Fem
+            -Valla",
+        // MOT
+        "-MOT_Mix
+            -Hyreim
+            -Rakvar
+            -Sjaard
+            -Rekvam",
+        "-MOT_Masc
+            -Vugnar
+            -Harald",
+        "-MOT_Fem
+            -Yigit",
     ];
-    fill_sheet("Nordic", name_list);
+    fill_sheet(nordic_sheet, nordic_name_list);
+
+    // Write to File
+    spreadsheet_ods::write_ods(&mut wb, path).expect("write_ods")
 }
 
-/// Take a string that contain -name1 -name2 -...
-/// Return Vec<String>
+/// Fill sheet with names_list = Vec<names>
+/// Use DyNG Data structure for names
+fn fill_sheet(sheet: &mut Sheet, names_list: Vec<&str>) {
+    let mut attribute = Attribute::Strength;
+    let mut category = Category::Mix;
+
+    for names in names_list {
+        let column_entry = ColumnEntry {
+            attribute: attribute.clone(),
+            category: category.clone(),
+            string: names.to_string(),
+        };
+
+        add_to_sheet(sheet, column_entry);
+
+        let is_last_category = category == Category::Fem;
+        if is_last_category {
+            attribute = attribute.get_next();
+        }
+        category = category.get_next();
+    }
+}
+
+/// Add a Column entry to a Sheet
+pub fn add_to_sheet(sheet: &mut Sheet, column_entry: ColumnEntry) {
+    let column_id = column_entry.attribute as u8 * 3 + column_entry.category as u8;
+    let mut strings = sort_names(column_entry.string);
+
+    // Loop over names
+    for i in 0..strings.len() {
+        sheet.set_value(i as u32, column_id as u32, strings.swap_remove(0));
+    }
+}
+
+/// Take a string of : -name1 -name2 -...
+/// Return Vec<String> of each name
 pub fn sort_names(string: String) -> Vec<String> {
     println!("---Sorting Names");
     let mut names = vec![];
 
-    // TODO : swap to &str
-    // let mut s: &str = "tets";
-    // let t= s.chars();
-    // s = s.trim();
-
     let mut current_name = String::from("");
     let mut record = false;
+
     for character in string.chars() {
         if record {
             current_name.push(character);
@@ -146,234 +266,33 @@ pub fn sort_names(string: String) -> Vec<String> {
         if character == '\n' {
             record = false;
             current_name = current_name.trim().to_string();
-            println!("Name = {}", current_name);
+            // println!("Name = {}", current_name);
             names.push(current_name.clone());
             current_name = String::from("");
         }
     }
 
     current_name = current_name.trim().to_string();
-    println!("Name = {}", current_name);
+    // println!("Name = {}", current_name);
     names.push(current_name.clone());
 
     return names;
 }
 
-/// Create or Write a .ods file at path
-/// Fill sheet based on entry
-pub fn add_to_sheet<P: AsRef<Path>>(path: P, sheet_name: &str, column_entry: ColumnEntry) {
-    let column_id = column_entry.attribute as u8 * 3 + column_entry.category as u8;
-    let mut strings = sort_names(column_entry.string);
+/* #endregion */
 
-    // Create or Get WorkBook
-    let mut wb = if path.as_ref().exists() {
-        spreadsheet_ods::read_ods(&path).unwrap()
-    } else {
-        WorkBook::new(locale!("en-US"))
-    };
+/* #region FACTIONS */
 
-    // Create Sheet1
-    if wb.num_sheets() == 0 {
-        let sheet = Sheet::new(sheet_name);
-        wb.push_sheet(sheet);
-    }
-
-    let sheet = wb.sheet_mut(0);
-
-    // Loop over names
-    for i in 0..strings.len() {
-        sheet.set_value(i as u32, column_id as u32, strings.swap_remove(0));
-    }
-
-    // Write to File
-    spreadsheet_ods::write_ods(&mut wb, path).expect("write_ods")
+pub fn create_factions_workbook() {
+    // TODO
 }
 
-/// Fill sheet with names_list = Vec<names>
-/// Use DyNG Data structure for names
-fn fill_sheet(sheet_name: &str, names_list: Vec<&str>) {
-    let path = std::path::Path::new("test_out/dyng_names.ods");
+/* #endregion */
 
-    let mut attribute = Attribute::Strength;
-    let mut category = Category::Mix;
+/* #region ATTRIBUTES */
 
-    for names in names_list {
-        let column_entry = ColumnEntry {
-            attribute: attribute.clone(),
-            category: category.clone(),
-            string: names.to_string(),
-        };
-
-        add_to_sheet(path, sheet_name, column_entry);
-
-        attribute = attribute.get_next();
-        category = category.get_next();
-    }
+pub fn create_attributes_workbook() {
+    // TODO
 }
 
-/// Create Nordic Culture Component name registry
-fn fill_sheet_painfull() {
-    let path = std::path::Path::new("test_out/dyng_names.ods");
-    let sheet_name = "Nordic";
-
-    // STR
-    let str_mix = ColumnEntry {
-        attribute: Attribute::Strength,
-        category: Category::Mix,
-        string: String::from(
-            "-Vyrkol
-            -Howitir
-            -Idwyr
-            -Hilmar
-            -Hrovitnir",
-        ),
-    };
-    add_to_sheet(path, sheet_name, str_mix);
-
-    let str_masc = ColumnEntry {
-        attribute: Attribute::Strength,
-        category: Category::Masc,
-        string: String::from(
-            "-Bjohrn
-            -Ragnvald
-            -Ulthor
-            -Olaf",
-        ),
-    };
-    add_to_sheet(path, sheet_name, str_masc);
-
-    let str_fem = ColumnEntry {
-        attribute: Attribute::Strength,
-        category: Category::Fem,
-        string: String::from("-Jarla"),
-    };
-    add_to_sheet(path, sheet_name, str_fem);
-
-    // SPI
-    let spi_mix = ColumnEntry {
-        attribute: Attribute::Spirit,
-        category: Category::Mix,
-        string: String::from("-Eradan"),
-    };
-    add_to_sheet(path, sheet_name, spi_mix);
-
-    let spi_masc = ColumnEntry {
-        attribute: Attribute::Spirit,
-        category: Category::Masc,
-        string: String::from(
-            "-Ymladd
-            -Lothrik
-            -Unduradh",
-        ),
-    };
-    add_to_sheet(path, sheet_name, spi_masc);
-
-    let spi_fem = ColumnEntry {
-        attribute: Attribute::Spirit,
-        category: Category::Fem,
-        string: String::from("Ulgrate"),
-    };
-    add_to_sheet(path, sheet_name, spi_fem);
-
-    // INT
-    let int_mix = ColumnEntry {
-        attribute: Attribute::Intelligence,
-        category: Category::Mix,
-        string: String::from("-Yhorm"),
-    };
-    add_to_sheet(path, sheet_name, int_mix);
-
-    let int_masc = ColumnEntry {
-        attribute: Attribute::Intelligence,
-        category: Category::Masc,
-        string: String::from("-Einar"),
-    };
-    add_to_sheet(path, sheet_name, int_masc);
-
-    let int_fem = ColumnEntry {
-        attribute: Attribute::Intelligence,
-        category: Category::Fem,
-        string: String::from(""),
-    };
-    add_to_sheet(path, sheet_name, int_fem);
-
-    // CUN
-    let cun_mix = ColumnEntry {
-        attribute: Attribute::Cunning,
-        category: Category::Mix,
-        string: String::from(
-            "-Lokat
-            -Leiden",
-        ),
-    };
-    add_to_sheet(path, sheet_name, cun_mix);
-
-    let cun_masc = ColumnEntry {
-        attribute: Attribute::Cunning,
-        category: Category::Masc,
-        string: String::from("-Zigomar"),
-    };
-    add_to_sheet(path, sheet_name, cun_masc);
-
-    let cun_fem = ColumnEntry {
-        attribute: Attribute::Cunning,
-        category: Category::Fem,
-        string: String::from("-Shanar"),
-    };
-    add_to_sheet(path, sheet_name, cun_fem);
-
-    // DEX
-    let dex_mix = ColumnEntry {
-        attribute: Attribute::Dexterity,
-        category: Category::Mix,
-        string: String::from("-Ivyr"),
-    };
-    add_to_sheet(path, sheet_name, dex_mix);
-
-    let dex_masc = ColumnEntry {
-        attribute: Attribute::Dexterity,
-        category: Category::Masc,
-        string: String::from(
-            "-Rarick
-            -Holten",
-        ),
-    };
-    add_to_sheet(path, sheet_name, dex_masc);
-
-    let dex_fem = ColumnEntry {
-        attribute: Attribute::Dexterity,
-        category: Category::Fem,
-        string: String::from("-Valla"),
-    };
-    add_to_sheet(path, sheet_name, dex_fem);
-
-    // MOT
-    let mot_mix = ColumnEntry {
-        attribute: Attribute::Motricity,
-        category: Category::Mix,
-        string: String::from(
-            "-Hyreim
-            -Rakvar
-            -Sjaard
-            -Rekvam",
-        ),
-    };
-    add_to_sheet(path, sheet_name, mot_mix);
-
-    let mot_masc = ColumnEntry {
-        attribute: Attribute::Motricity,
-        category: Category::Masc,
-        string: String::from(
-            "-Vugnar
-            -Harald",
-        ),
-    };
-    add_to_sheet(path, sheet_name, mot_masc);
-
-    let mot_fem = ColumnEntry {
-        attribute: Attribute::Motricity,
-        category: Category::Fem,
-        string: String::from("-Yigit"),
-    };
-    add_to_sheet(path, sheet_name, mot_fem);
-}
+/* #endregion */

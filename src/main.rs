@@ -12,8 +12,8 @@ use ferris_says::say;
 use std::io::{BufWriter, stdout};
 
 fn main() {
-    spread_sheets::create_registry();
-    // spread_sheets::create_spread_sheet();
+    spread_sheets::create_names_workbook();
+    // spread_sheets::create_spread_sheet_test();
 
 //     let string = String::from(
 //         "-Hyreim
