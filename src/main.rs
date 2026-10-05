@@ -1,9 +1,10 @@
-mod mtr_calc;
-mod spread_sheets;
 mod async_test;
+mod mtr_calc;
 mod multithread;
+mod spread_sheets;
+mod tests;
 
-use std::{io, cmp::Ordering, time::Instant};
+use std::{cmp::Ordering, io, time::Instant};
 
 use rand::{Rng, RngExt};
 
@@ -15,16 +16,16 @@ fn main() {
     spread_sheets::create_names_workbook();
     spread_sheets::create_factions_workbook();
     spread_sheets::create_attributes_workbook();
-    
+
     // spread_sheets::create_spread_sheet_test();
 
-//     let string = String::from(
-//         "-Hyreim
-//          -Rakvar
-//          -Sjaard
-//          -Rekvam",
-//     );
-//     string_analyzer(string);
+    //     let string = String::from(
+    //         "-Hyreim
+    //          -Rakvar
+    //          -Sjaard
+    //          -Rekvam",
+    //     );
+    //     string_analyzer(string);
 
     // guessing_game();
     // mtr_calc::balance_calculation();
@@ -78,7 +79,7 @@ fn guessing_game() {
             Ordering::Equal => {
                 println!("You win!");
                 break;
-            },
+            }
         }
     }
 }
@@ -120,14 +121,14 @@ fn fibonacci_nbr(n: u64) -> u128 {
     for _ in 2..n {
         if is_alt {
             b = a + b;
-        }else {
+        } else {
             a = a + b;
         }
 
         is_alt = !is_alt;
     }
 
-    return a + b
+    return a + b;
 }
 
 fn test_async() {

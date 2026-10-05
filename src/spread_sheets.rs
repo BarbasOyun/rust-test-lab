@@ -88,7 +88,7 @@ pub fn create_spread_sheet_test() {
     spreadsheet_ods::write_ods(&mut wb, "test_out/lib_example.ods").expect("write_ods")
 }
 
-fn create_or_get_workbook<P: AsRef<Path>>(path: P) -> Result<WorkBook, String> {
+pub fn create_or_get_workbook<P: AsRef<Path>>(path: P) -> Result<WorkBook, String> {
     let wb = if path.as_ref().exists() {
         spreadsheet_ods::read_ods(path).unwrap()
     } else {
