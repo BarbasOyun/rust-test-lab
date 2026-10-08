@@ -160,20 +160,7 @@ fn fill_column_offset(sheet: &mut Sheet, column_id: u32, offset: u32, strings: &
 // DyNG Spread Sheet Filler
 // Converte Authoring Data from Obsidian to .ods
 
-// AUTHORING DATA
-
-const ATTRIBUTES: [&str; 6] = ["STR", "SPI", "INT", "CUN", "DEX", "MOT"];
-
-const NAME_TYPES: [&str; 6] = [
-    "Adjective",
-    "Name",
-    "Equipment",
-    "Bodypart",
-    "Creature",
-    "Role",
-];
-
-const CATEGORIES: [&str; 3] = ["Mix", "Masc", "Fem"];
+/* #region AUTHORING DATA */
 
 const FACTIONS: [&str; 10] = [
     "Knights",
@@ -192,6 +179,100 @@ const CULTURE_COMPONENTS: [&str; 11] = [
     "European", "Nordic", "Russian", "Dwarven", "Tribal", "Aztek", "Egyptian", "Asian", "Elven",
     "Demonic", "Goblin",
 ];
+
+const CATEGORIES: [&str; 3] = ["Mix", "Masc", "Fem"];
+
+const NAME_TYPES: [&str; 6] = [
+    "Adjective",
+    "Name",
+    "Equipment",
+    "Bodypart",
+    "Creature",
+    "Role",
+];
+
+const ATTRIBUTES: [&str; 6] = ["STR", "SPI", "INT", "CUN", "DEX", "MOT"];
+
+/* #endregion */
+
+/* #region FACTIONS DATA */
+
+const KNIGHTS_FAMILIES: &str = "-Tilbury
+-Wade
+-Tregor
+-Placidius
+-Kihei
+-Sceptile
+-Retsen
+-Talowi
+-Archandiel
+-Kessada
+-Malori
+-Victus
+-Thayer
+-Appolloosa
+-Laughton
+-Raby
+-Kiel
+-Mbari
+-Andurs
+-Hagel
+-Sayar
+-Vergon
+-Cahine
+-Guedon
+-Lagar
+-Barner
+-Lamy
+-Pax
+-Madox
+-Fender
+-Smallwood
+-Vaderius
+-Gonsalve
+-Thomasius
+-Delso
+-Teissen
+-Landor
+-Mauri
+-Moribund
+-Goatsi
+-Crendor
+-Wistar
+-Cubeka
+-Baros
+-Morical
+-Gabbit
+-Herbert
+-Burada
+-Kallister
+-Bernstein
+-Morden";
+
+const NORDIC_FAMILIES: &str = "-Voren
+-Wolder
+";
+
+const DWARF_FAMILIES: &str = "-Mammon
+-Higley
+-Ansbach
+-Hardon
+-Ramos
+-Fink
+-Tuired
+-Thorpe
+-Phips
+-Tin
+-Gertin
+-Wallis
+-Wasser
+-Mardum
+-Karabec
+-Roklas";
+
+const FAMILY_NAMES: [&str; 3] = [KNIGHTS_FAMILIES, NORDIC_FAMILIES, DWARF_FAMILIES];
+
+/* #endregion */
 
 /* #region COMPONENTS DATA */
 
@@ -250,28 +331,9 @@ const NORDIC_NAMES: [[&str; 3]; 6] = [
 
 /* #endregion */
 
-/* #region FACTIONS DATA */
-
-const KNIGHTS_FAMILIES: [&str; 14] = [
-    "Tilbury",
-    "Wade",
-    "Tregor",
-    "Placidius",
-    "Wolder",
-    "Kihei",
-    "Sceptile",
-    "Retsen",
-    "Talowi",
-    "Archandiel",
-    "Kessada",
-    "Malori",
-    "Victus",
-    "Thayer",
-];
-
-/* #endregion */
-
 /* #region ATTRIBUTES DATA */
+
+/* #region STR NAMES */
 
 const STR_ADJECTIVE: &str = "-Big
 -Ugly
@@ -372,6 +434,383 @@ const STR_ROLE: &str = "-Eater
 -Shattering
 -Flayer";
 
+/* #endregion */
+
+/* #region SPI NAMES */
+
+const SPI_ADJECTIVE: &str = "-Pure
+-Eternal
+-Fanatical
+-Ambitious
+-Fiendish
+-Forbidden
+-Oblivion
+-Zealous
+-Abyssal
+-Endless
+-Hollow
+-Immortal
+-Imperial
+-Unending
+-Demonic
+-Divine
+-Innervating
+-Desecrated
+-Seven";
+
+const SPI_NAME: &str = "-Pain
+-Storm
+-Oath
+-Soul
+-Will
+-Eternity
+-Flame
+-Chain
+-Hex
+-Steel
+-Curse
+-Drive
+-Crypt
+-Dawn
+-Radiance
+-Mandate
+-Bane
+-Blessing
+-Omen
+-Redemption
+-Rite
+-Embrace
+-Sky
+-Sun
+-Trinity
+-Demon
+-Miracle
+-Virtue
+-Rune
+-Ascension
+-Aspect
+-Salvation
+-Requiem";
+
+const SPI_EQUIPMENT: &str = "-Scepter
+-Maul
+-Coffin
+-Pickaxe
+-Shovel
+-Armguard
+-Tomb stone
+-Sigil
+-Flail
+-Torch
+-Locket
+-Aegis
+-Crown
+-Talisman
+-Mallet
+-Lantern";
+
+const SPI_BODYPART: &str = "-Blood
+-Arm
+-Hand
+-Flesh";
+
+const SPI_CREATURE: &str = "-Stag
+-Dragon
+-Gargoyle";
+
+const SPI_ROLE: &str = "-Elder
+-Bringer
+-Avenger
+-Keeper
+-Believer
+-Purifier
+-Angel
+-Lord
+-Carver
+-Martyr
+-Oracle";
+
+/* #endregion */
+
+/* #region INT NAMES */
+
+const INT_ADJECTIVE: &str = "-Chill
+-Ancient
+-Amplifying
+-Lucid
+-Blasting
+-Glowing
+-Crystalline
+-Fated
+-Glacial
+-Cosmic
+-Frozen
+-Flowing
+-Arch
+-One";
+
+const INT_NAME: &str = "-Desolation
+-Void
+-faerie
+-Aether
+-Wisp
+-Chapter
+-Barrier
+-Blackfire
+-Echo
+-Essence
+-Horizon
+-Focus
+-Rift
+-Water
+-Convergence
+-Field
+-Power
+-Black-hole
+-Reality
+-Reverberation
+-Arcane
+-Nether
+-Remnant
+-Singularity
+-Portal
+-Paradox";
+
+const INT_EQUIPMENT: &str = "-Orb
+-Tome
+-Mantle
+-Catalyst
+-Codex
+-Idol
+-Crystal
+-Sash
+-Staff
+-Diadem
+-Rod
+-Circlet
+-Hourglass
+-Quill
+-Parchment
+-Scroll";
+
+const INT_BODYPART: &str = "-Brain
+-Spine
+-Head";
+
+const INT_CREATURE: &str = "-Howl
+-Wyvern
+-Fiend";
+
+const INT_ROLE: &str = "-Advisor
+-Seeker
+-Alternator
+-Banshee
+-Lich
+-Pyromancer
+-Absorber";
+
+/* #endregion */
+
+/* #region CUN NAMES */
+
+const CUN_ADJECTIVE: &str = "-Accursed
+-Rotten
+-Death
+-Plagued
+-Clever
+-Heartless
+-Diseased
+-Small
+-Dark
+-Monstruous
+-Deadly
+-Blighting
+-Haunting
+-Lost
+-Black
+-Ruined
+-Profane
+-Umbral
+-Sinister
+-Slithering";
+
+const CUN_NAME: &str = "-Cave
+-Death
+-Thread
+-Mirror
+-Dream
+-Dusk
+-Torment
+-Grudge
+-Shadow
+-Moon
+-Despair
+-Scarcrow
+-Promise
+-Mirage
+-Person
+-Pain";
+
+const CUN_EQUIPMENT: &str = "-Blade
+-Dagger
+-Guise
+-Disguise
+-Mask
+-Censer";
+
+const CUN_BODYPART: &str = "-Ears
+-Bone
+-Corpse
+-Scar
+-Maw
+-Nerve
+-Pancreas
+-Tongue";
+
+const CUN_CREATURE: &str = "-Rat
+-Spider";
+
+const CUN_ROLE: &str = "-Bag
+-Artist
+-Dweller
+-Assassin
+-Whisperer
+-Spectre
+-Puppeteer
+-Reaper
+-Being";
+
+/* #endregion */
+
+/* #region DEX NAMES */
+
+const DEX_ADJECTIVE: &str = "-Elusive
+-Fast
+-Swift
+-Bramble
+-Quick
+-Verdant
+-Winged
+-Free
+-Light
+-Two";
+
+const DEX_NAME: &str = "-Wild
+-Silver
+-Nature
+-Stride
+-Haste
+-Spirit
+-Silk
+-Moon";
+
+const DEX_EQUIPMENT: &str = "-Bow
+-Arrow
+-Vest
+-Buckler
+-Slingshot
+-Sling
+-Dirk
+-Razor
+-Hood";
+
+const DEX_BODYPART: &str = "-Nose
+-Finger
+-Feets
+-Eye
+-Ears
+-Talon
+-Fang
+-Claw";
+
+const DEX_CREATURE: &str = "-Beast
+-Hawk
+-Scorpion
+-Serpent";
+
+const DEX_ROLE: &str = "-Hunter
+-Smuggler
+-Tracker
+-Pathfinder
+-Slinger
+-Dancer
+-Prowler
+-Stalker
+-Savage";
+
+/* #endregion */
+
+/* #region MOT NAMES */
+
+const MOT_ADJECTIVE: &str = "-Beautiful
+-Beloved
+-Merciful
+-Great
+-Handsome
+-Lucky
+-Crimson
+-Agile
+-Serrated
+-Ravenous
+-Blossoming
+-Dire";
+
+const MOT_NAME: &str = "-Rabble
+-Raid
+-Hull
+-Hurricane
+-Dice";
+
+const MOT_EQUIPMENT: &str = "-Sword
+-Boots
+-Gloves
+-Jewel
+-Bracer
+-Cloak
+-Mail
+-Bolts
+-Scimitar
+-Harness
+-Spear
+-Cutlass
+-Glaive
+-Machete
+-Muzzle
+-Whip";
+
+const MOT_BODYPART: &str = "-Legs
+-Hair
+-Hands
+-Tusks
+-Fur";
+
+const MOT_CREATURE: &str = "-Hound
+-Kraken
+-Hydra";
+
+const MOT_ROLE: &str = "-Delver
+-Slayer
+-Tamer
+-Skewer
+-Savior
+-Killer
+-Ravager
+-Rouser
+-Leader
+-Render
+-Executioner
+-Reaver
+-Collector
+-Raiser
+-Gambler
+-Companion
+-Impaler
+-Brawler";
+
+/* #endregion */
+
+/* #region NAMES */
+
 const STR_TITLES: [&str; 6] = [
     STR_ADJECTIVE,
     STR_NAME,
@@ -380,6 +819,57 @@ const STR_TITLES: [&str; 6] = [
     STR_CREATURE,
     STR_ROLE,
 ];
+
+const SPI_TITLES: [&str; 6] = [
+    SPI_ADJECTIVE,
+    SPI_NAME,
+    SPI_EQUIPMENT,
+    SPI_BODYPART,
+    SPI_CREATURE,
+    SPI_ROLE,
+];
+
+const INT_TITLES: [&str; 6] = [
+    INT_ADJECTIVE,
+    INT_NAME,
+    INT_EQUIPMENT,
+    INT_BODYPART,
+    INT_CREATURE,
+    INT_ROLE,
+];
+
+const CUN_TITLES: [&str; 6] = [
+    CUN_ADJECTIVE,
+    CUN_NAME,
+    CUN_EQUIPMENT,
+    CUN_BODYPART,
+    CUN_CREATURE,
+    CUN_ROLE,
+];
+
+const DEX_TITLES: [&str; 6] = [
+    DEX_ADJECTIVE,
+    DEX_NAME,
+    DEX_EQUIPMENT,
+    DEX_BODYPART,
+    DEX_CREATURE,
+    DEX_ROLE,
+];
+
+const MOT_TITLES: [&str; 6] = [
+    MOT_ADJECTIVE,
+    MOT_NAME,
+    MOT_EQUIPMENT,
+    MOT_BODYPART,
+    MOT_CREATURE,
+    MOT_ROLE,
+];
+
+const TITLES: [[&str; 6]; 6] = [
+    STR_TITLES, SPI_TITLES, INT_TITLES, CUN_TITLES, DEX_TITLES, MOT_TITLES,
+];
+
+/* #endregion */
 
 /* #endregion */
 
@@ -433,6 +923,38 @@ pub fn sort_names(string: String) -> Vec<String> {
     return names;
 }
 
+pub fn create_factions_workbook() {
+    println!("---Create Factions Workbook");
+    let path = std::path::Path::new("test_out/dyng_fations.ods");
+    let mut wb = create_or_get_workbook(path).unwrap();
+
+    clear_sheets(&mut wb);
+
+    // Get as String
+    let mut factions: Vec<String> = FACTIONS.iter().map(|s| s.to_string()).collect();
+    let mut culture_components: Vec<String> =
+        CULTURE_COMPONENTS.iter().map(|s| s.to_string()).collect();
+
+    // 1] Sheet1 = Cultural Components
+    let cc_sheet = create_sheet(&mut wb, "cultural_components", 0).unwrap();
+
+    cc_sheet.set_value(0, 0, "Faction");
+    fill_column_offset(cc_sheet, 0, 1, &mut factions.clone());
+    fill_row_offset(cc_sheet, 0, 1, &mut culture_components);
+
+    // 2] Sheet2 = Family Names
+    let fn_sheet = create_sheet(&mut wb, "family_names", 1).unwrap();
+
+    fill_row(fn_sheet, 0, &mut factions);
+    for i in 0..FAMILY_NAMES.len() {
+        let mut family_names = sort_names(FAMILY_NAMES[i].to_owned());
+        fill_column_offset(fn_sheet, i as u32, 1, &mut family_names);
+    }
+
+    // Write to File
+    spreadsheet_ods::write_ods(&mut wb, path).expect("write_ods")
+}
+
 /* #region NAMES */
 
 // Take a sring of names
@@ -441,7 +963,7 @@ pub fn sort_names(string: String) -> Vec<String> {
 /// Create a names WorkBook
 /// Each sheet = 1 Culture Component Names
 pub fn create_names_workbook() {
-    // println!("---Create Names Workbook");
+    println!("---Create Names Workbook");
     let path = std::path::Path::new("test_out/dyng_names.ods");
     let mut wb = create_or_get_workbook(path).unwrap();
 
@@ -483,43 +1005,6 @@ pub fn fill_sheet(sheet: &mut Sheet) {
 
 /* #endregion */
 
-/* #region FACTIONS */
-
-pub fn create_factions_workbook() {
-    println!("---Create Factions Workbook");
-    let path = std::path::Path::new("test_out/dyng_fations.ods");
-    let mut wb = create_or_get_workbook(path).unwrap();
-
-    clear_sheets(&mut wb);
-
-    // Get as String
-    let mut factions: Vec<String> = FACTIONS.iter().map(|s| s.to_string()).collect();
-    let mut culture_components: Vec<String> =
-        CULTURE_COMPONENTS.iter().map(|s| s.to_string()).collect();
-    let mut knights_families: Vec<String> =
-        KNIGHTS_FAMILIES.iter().map(|s| s.to_string()).collect();
-
-    // Sheet1 = Cultural Components
-    let cc_sheet = create_sheet(&mut wb, "cultural_components", 0).unwrap();
-
-    cc_sheet.set_value(0, 0, "Faction");
-    fill_column_offset(cc_sheet, 0, 1, &mut factions.clone());
-    fill_row_offset(cc_sheet, 0, 1, &mut culture_components);
-
-    // Sheet2 = Family Names
-    let fn_sheet = create_sheet(&mut wb, "family_names", 1).unwrap();
-
-    fill_row(fn_sheet, 0, &mut factions);
-    fill_column_offset(fn_sheet, 0, 1, &mut knights_families);
-
-    // Write to File
-    spreadsheet_ods::write_ods(&mut wb, path).expect("write_ods")
-}
-
-/* #endregion */
-
-/* #region ATTRIBUTES */
-
 pub fn create_attributes_workbook() {
     println!("---Create Attributes Workbook");
     let path = std::path::Path::new("test_out/dyng_attributes.ods");
@@ -527,29 +1012,26 @@ pub fn create_attributes_workbook() {
 
     clear_sheets(&mut wb);
 
-    // Get String
-    // let mut str_adjectives = sort_names(STR_ADJECTIVE.to_owned());
-
-    // Sheet1 = Titles
+    // 1] Sheet1 = Titles
     let titles_sheet = create_sheet(&mut wb, "titles", 0).unwrap();
 
     // First Row
     let mut columns_names = assign_strings(ATTRIBUTES.to_vec(), NAME_TYPES.to_vec());
-
     fill_row(titles_sheet, 0, &mut columns_names);
 
-    // STR Titles
-    for i in 0..STR_TITLES.len() {
-        let mut str_title = sort_names(STR_TITLES[i].to_owned());
-        fill_column_offset(titles_sheet, 0 + i as u32, 1, &mut str_title);
+    // Titles
+    for i in 0..TITLES.len() {
+        let column_id = (i * 6) as u32; // titles types
+        for j in 0..TITLES[i].len() {
+            let mut title = sort_names(TITLES[i][j].to_owned());
+            fill_column_offset(titles_sheet, column_id + j as u32, 1, &mut title);
+        }
     }
 
-    // Sheet2 = Values
+    // 2] Sheet2 = Values
     let values_sheet = create_sheet(&mut wb, "values", 1).unwrap();
     // TODO
 
     // Write to File
     spreadsheet_ods::write_ods(&mut wb, path).expect("write_ods");
 }
-
-/* #endregion */
